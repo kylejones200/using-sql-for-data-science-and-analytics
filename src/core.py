@@ -53,7 +53,7 @@ def analyze_sql_results(df: pd.DataFrame) -> Dict:
     }
 
 def plot_sql_analysis(df: pd.DataFrame, title: str, output_path: Path):
- """Plot SQL analysis results """
+    """Plot SQL analysis results """
     fig, ax = plt.subplots(figsize=(10, 6))
     
     numeric_cols = df.select_dtypes(include=[np.number]).columns
