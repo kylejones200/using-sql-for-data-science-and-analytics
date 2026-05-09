@@ -1,0 +1,11 @@
+data:
+  freq: D
+model:
+  alpha: 0.7
+output:
+  figures_dir: images
+  figure_format: png
+  figure_dpi: 100
+  figsize:
+  - 10
+  - 6

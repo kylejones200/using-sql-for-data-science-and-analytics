@@ -6,6 +6,18 @@ from pathlib import Path
 from typing import Dict
 import matplotlib.pyplot as plt
 import logging
+import yaml
+
+
+def load_config(config_path=None):
+    """Load configuration from YAML file."""
+    if config_path is None:
+        config_path = Path(__file__).parent / 'config.yaml'
+    if not config_path.exists():
+        return {}
+    with open(config_path) as _f:
+        import yaml as _yaml
+        return _yaml.safe_load(_f) or {}
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -54,7 +66,7 @@ def analyze_sql_results(df: pd.DataFrame) -> Dict:
 
 def plot_sql_analysis(df: pd.DataFrame, title: str, output_path: Path):
     """Plot SQL analysis results """
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=tuple(config.get('output', {}).get('figsize', [10, 6])))
     
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     if len(numeric_cols) > 0:
