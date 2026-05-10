@@ -1,52 +1,31 @@
+---
+author: "Kyle Jones"
+date_published: "May 14, 2025"
+date_exported_from_medium: "November 10, 2025"
+canonical_link: "https://medium.com/@kyle-t-jones/using-sql-for-data-science-and-analytics-719d2e1a0e0d"
+---
+
 # Using SQL for Data Science and Analytics SQL is the backbone of data science work in companies that rely on
 structured data. Despite the growing ecosystem of Python, R, and...
 
 ### Using SQL for Data Science and Analytics
-SQL is the backbone of data science work in companies that rely on
-structured data. Despite the growing ecosystem of Python, R, and
-cloud-native tools, most real-world datasets still live in relational
-databases. These could be traditional systems like PostgreSQL and
-Oracle, data warehouses like Redshift, or cloud-native services like
-BigQuery. Wherever the data lives, SQL is usually the first gate you
-must pass through to work with it.
+SQL is the backbone of data science work in companies that rely on structured data. Despite the growing ecosystem of Python, R, and cloud-native tools, most real-world datasets still live in relational databases. These could be traditional systems like PostgreSQL and Oracle, data warehouses like Redshift, or cloud-native services like BigQuery. Wherever the data lives, SQL is usually the first gate you must pass through to work with it.
 
-SQL excels at expressing relationships between entities. Whether you're
-calculating churn rates, aggregating sales by geography, or building
-user cohorts, these tasks begin with structured queries. SQL lets you
-describe what you want, not how to compute it --- this declarative style
-is a strength. You ask the database to give you "sales by region and
-quarter," and it handles the execution plan. You don't have to worry
-about iterating over rows or indexing strategies.
+SQL excels at expressing relationships between entities. Whether you're calculating churn rates, aggregating sales by geography, or building user cohorts, these tasks begin with structured queries. SQL lets you describe what you want, not how to compute it --- this declarative style is a strength. You ask the database to give you "sales by region and quarter," and it handles the execution plan. You don't have to worry about iterating over rows or indexing strategies.
 
-SQL can power end-to-end analytical pipelines. You can calculate
-features for machine learning, perform exploratory analysis, validate
-data quality, and generate business metrics --- all inside SQL. It often
-outperforms Python in terms of speed when data volumes grow, because
-databases are optimized for parallelized set operations.
+SQL can power end-to-end analytical pipelines. You can calculate features for machine learning, perform exploratory analysis, validate data quality, and generate business metrics --- all inside SQL. It often outperforms Python in terms of speed when data volumes grow, because databases are optimized for parallelized set operations.
 
-SQL is also universal. Analysts, data scientists, engineers, and
-business users often collaborate using SQL. The shared syntax means
-fewer translation layers, and the results are immediately reproducible.
+SQL is also universal. Analysts, data scientists, engineers, and business users often collaborate using SQL. The shared syntax means fewer translation layers, and the results are immediately reproducible.
 
-But SQL lacks native support for machine learning, statistical testing,
-and visualization. That's where Python or R come in. The best data
-workflows use SQL for what it's good at --- access, joins, filters,
-aggregations --- and leave the rest to specialized tools.
+But SQL lacks native support for machine learning, statistical testing, and visualization. That's where Python or R come in. The best data workflows use SQL for what it's good at --- access, joins, filters, aggregations --- and leave the rest to specialized tools.
 
-In the rest of this article explores to use SQL as a full analytical
-tool by combining SQL with Python, using window functions and CTEs,
-engineering features, and building model-ready tables.
+In the rest of this article explores to use SQL as a full analytical tool by combining SQL with Python, using window functions and CTEs, engineering features, and building model-ready tables.
 
 ### Connecting to Data
-Before writing a single SQL query, you need to connect to your database.
-This might be a local SQLite file, a cloud-based Postgres server, a
-production warehouse like Snowflake, or a sandboxed dataset in BigQuery.
-Regardless of where your data lives, the process usually involves three
-steps: setting up a connection, authenticating, and executing queries.
+Before writing a single SQL query, you need to connect to your database. This might be a local SQLite file, a cloud-based Postgres server, a production warehouse like Snowflake, or a sandboxed dataset in BigQuery. Regardless of where your data lives, the process usually involves three steps: setting up a connection, authenticating, and executing queries.
 
 #### Local Database (SQLite)
-SQLite is built into Python and great for testing. Here's how to connect
-and run queries:
+SQLite is built into Python and great for testing. Here's how to connect and run queries:
 
 ```python
 import sqlite3
@@ -58,12 +37,10 @@ df = pd.read_sql(query, conn)
 conn.close
 ```
 
-This works without installing a database server. Many tutorials and
-analytics pipelines start with SQLite for this reason.
+This works without installing a database server. Many tutorials and analytics pipelines start with SQLite for this reason.
 
 #### PostgreSQL with SQLAlchemy
-For most production-grade databases, use SQLAlchemy for connection and
-abstraction.
+For most production-grade databases, use SQLAlchemy for connection and abstraction.
 
 ```python
 from sqlalchemy import create_engine
@@ -74,14 +51,10 @@ query = "SELECT * FROM customers LIMIT 10;"
 df = pd.read_sql(query, engine)
 ```
 
-If your database requires SSL or IAM authentication, you might need
-additional parameters. But the principle is the same: create an engine,
-write SQL, and pull the result into a DataFrame.
+If your database requires SSL or IAM authentication, you might need additional parameters. But the principle is the same: create an engine, write SQL, and pull the result into a DataFrame.
 
 #### BigQuery
-Google BigQuery can be accessed through the
-`google-cloud-bigquery` library. For
-example:
+Google BigQuery can be accessed through the `google-cloud-bigquery` library. For example:
 
 ```python
 from google.cloud import bigquery
@@ -98,25 +71,15 @@ LIMIT 5;
 df = client.query(query).to_dataframe()
 ```
 
-Authentication is handled via environment credentials or service
-accounts.
+Authentication is handled via environment credentials or service accounts.
 
 #### Why Python + SQL Is Powerful
-SQL gives you expressive access to data. Python gives you analysis,
-modeling, and plotting. Together, they let you start with a query and
-end with an insight.
+SQL gives you expressive access to data. Python gives you analysis, modeling, and plotting. Together, they let you start with a query and end with an insight.
 
-You can save reusable queries, wrap them in functions, or even
-parameterize them with Jinja templates. Many production workflows start
-with SQL and move into a Pandas pipeline. Some reverse it --- building
-queries from DataFrame inputs.
+You can save reusable queries, wrap them in functions, or even parameterize them with Jinja templates. Many production workflows start with SQL and move into a Pandas pipeline. Some reverse it --- building queries from DataFrame inputs.
 
 ### Exploratory Analysis with SQL
-Once you've connected to your database, the first thing you do is
-explore. Exploratory analysis in SQL mirrors what you'd do in pandas:
-count rows, look at group averages, identify extremes, and check for
-missing values. The difference is you're working with a query language,
-not a programming language.
+Once you've connected to your database, the first thing you do is explore. Exploratory analysis in SQL mirrors what you'd do in pandas: count rows, look at group averages, identify extremes, and check for missing values. The difference is you're working with a query language, not a programming language.
 
 #### Counts and Totals
 Start with the basics: how many rows are in the table?
@@ -138,8 +101,7 @@ SELECT SUM(order_total) AS total_sales FROM orders;
 ```
 
 #### Group Aggregation
-SQL's `GROUP BY` lets you summarize
-values by category---just like `groupby()` in pandas.
+SQL's `GROUP BY` lets you summarize values by category---just like `groupby()` in pandas.
 
 ``` 
 SELECT region, COUNT(*) AS num_orders, AVG(order_total) AS avg_order
@@ -189,8 +151,7 @@ SELECT order_id,
 FROM orders;
 ```
 
-This kind of logic is useful for feature engineering, labeling, and
-dashboards.
+This kind of logic is useful for feature engineering, labeling, and dashboards.
 
 #### NULL Checks
 Check for missing data:
@@ -213,26 +174,15 @@ SELECT *,
 FROM orders;
 ```
 
-These tools --- counts, filters, grouping, and derived columns --- are
-the foundation of all analysis. In Python, you'd use
-`describe()` and
-`groupby()`. In SQL, it's
-`SELECT`, `GROUP BY`, `WHERE`, and
-`CASE`. Mastering this exploratory layer
-means you can answer 80% of business questions directly in SQL.
+These tools --- counts, filters, grouping, and derived columns --- are the foundation of all analysis. In Python, you'd use `describe()` and `groupby()`. In SQL, it's `SELECT`, `GROUP BY`, `WHERE`, and `CASE`. Mastering this exploratory layer means you can answer 80% of business questions directly in SQL.
 
 ### Joins and Subqueries
-Most useful data isn't in a single table. It's scattered across
-normalized tables --- customers, orders, products, reviews, employees.
-To analyze it, you have to join tables.
+Most useful data isn't in a single table. It's scattered across normalized tables --- customers, orders, products, reviews, employees. To analyze it, you have to join tables.
 
-SQL joins are how you reassemble these pieces into a full picture. Once
-you learn how to combine tables, your analysis becomes richer and more
-flexible.
+SQL joins are how you reassemble these pieces into a full picture. Once you learn how to combine tables, your analysis becomes richer and more flexible.
 
 #### INNER JOIN
-The most common type. Only returns rows where the join condition is
-satisfied in both tables.
+The most common type. Only returns rows where the join condition is satisfied in both tables.
 
 ``` 
 SELECT o.order_id, o.order_total, c.customer_name
@@ -243,8 +193,7 @@ INNER JOIN customers c ON o.customer_id = c.customer_id;
 Use this when you're confident both tables have matching keys.
 
 #### LEFT JOIN
-Returns all rows from the left table and matching rows from the right.
-If there's no match, the result is NULL.
+Returns all rows from the left table and matching rows from the right. If there's no match, the result is NULL.
 
 ``` 
 SELECT c.customer_name, o.order_id, o.order_total
@@ -252,8 +201,7 @@ FROM customers c
 LEFT JOIN orders o ON c.customer_id = o.customer_id;
 ```
 
-Use this when you want to preserve all customers --- even those with no
-orders.
+Use this when you want to preserve all customers --- even those with no orders.
 
 #### FULL OUTER JOIN
 Keeps all rows from both tables. Missing matches are filled with NULLs.
@@ -305,8 +253,7 @@ WHERE order_total = (
 ```
 
 #### Common Table Expressions (CTEs)
-CTEs improve readability. They let you define temporary tables in a
-query.
+CTEs improve readability. They let you define temporary tables in a query.
 
 ``` 
 WITH top_customers AS (
@@ -322,17 +269,10 @@ JOIN customers c ON t.customer_id = c.customer_id;
 
 This is cleaner than deeply nested subqueries and can be chained.
 
-Joins and subqueries unlock the true power of relational data. Once you
-understand how to combine tables and modularize queries, SQL becomes
-expressive. You stop thinking in tables and start thinking in
-relationships and flows.
+Joins and subqueries unlock the true power of relational data. Once you understand how to combine tables and modularize queries, SQL becomes expressive. You stop thinking in tables and start thinking in relationships and flows.
 
 ### Window Functions and Advanced Analytics
-Window functions add a layer of analytic power to SQL that goes beyond
-basic aggregation. They let you compute metrics across groups of
-rows --- without collapsing those groups into a single row. That means
-you can calculate running totals, differences from group averages,
-ranks, and more --- all while keeping the original row structure.
+Window functions add a layer of analytic power to SQL that goes beyond basic aggregation. They let you compute metrics across groups of rows --- without collapsing those groups into a single row. That means you can calculate running totals, differences from group averages, ranks, and more --- all while keeping the original row structure.
 
 #### Syntax Overview
 Every window function follows this basic structure:
@@ -344,9 +284,7 @@ function() OVER (
 )
 ```
 
-Think of `PARTITION BY` like
-`GROUP BY`, but without collapsing rows.
-`ORDER BY` sets the sequence.
+Think of `PARTITION BY` like `GROUP BY`, but without collapsing rows. `ORDER BY` sets the sequence.
 
 #### Ranking and Row Numbering
 To rank customers within each region:
@@ -357,10 +295,7 @@ SELECT customer_id, region, order_total,
 FROM orders;
 ```
 
-`RANK()` allows ties;
-`DENSE_RANK()` skips no ranks;
-`ROW_NUMBER()` assigns a unique number
-regardless.
+`RANK()` allows ties; `DENSE_RANK()` skips no ranks; `ROW_NUMBER()` assigns a unique number regardless.
 
 #### Running Totals and Moving Averages
 Running total of sales per customer:
@@ -399,12 +334,10 @@ SELECT order_date, customer_id, order_total,
 FROM orders;
 ```
 
-You can also use `LEAD()` to look ahead.
-These are vital for change detection and behavioral analysis.
+You can also use `LEAD()` to look ahead. These are vital for change detection and behavioral analysis.
 
 #### Percentiles and Distribution Positioning
-Use `NTILE()` to break data into
-quantiles:
+Use `NTILE()` to break data into quantiles:
 
 ``` 
 SELECT customer_id, order_total,
@@ -425,20 +358,12 @@ WHERE p_rank <= 0.05;
 
 This is useful for identifying outliers or VIP customers.
 
-Window functions turn SQL into an analytics engine. They let you keep
-the row-level detail while adding context: how does this row compare to
-others in the same group? What came before it? What comes next?
+Window functions turn SQL into an analytics engine. They let you keep the row-level detail while adding context: how does this row compare to others in the same group? What came before it? What comes next?
 
-With joins and window functions together, you can now build full-fledged
-analytical pipelines using only SQL.
+With joins and window functions together, you can now build full-fledged analytical pipelines using only SQL.
 
 ### Feature Engineering in SQL
-Feature engineering prepares raw data for modeling. This means
-converting messy, timestamped, relational data into structured columns
-that help a model make decisions. SQL excels at this step when the data
-lives in a relational database. You can create categorical labels,
-time-based features, normalized values, and encoded variables directly
-in SQL.
+Feature engineering prepares raw data for modeling. This means converting messy, timestamped, relational data into structured columns that help a model make decisions. SQL excels at this step when the data lives in a relational database. You can create categorical labels, time-based features, normalized values, and encoded variables directly in SQL.
 
 #### Binning and Categorization
 Turn continuous values into buckets:
@@ -525,8 +450,7 @@ FROM customers
 GROUP BY customer_id;
 ```
 
-If you need all possible values dynamically, do it in Python after the
-SQL step.
+If you need all possible values dynamically, do it in Python after the SQL step.
 
 #### Reusable Features with Views and CTEs
 To avoid repeating logic, you can define reusable layers:
@@ -549,17 +473,10 @@ FROM customers c
 LEFT JOIN customer_order_summary o ON c.customer_id = o.customer_id;
 ```
 
-Feature engineering is where SQL becomes more than a query language. It
-becomes the engine behind reproducible, scalable data pipelines. By
-shaping raw tables into feature-rich datasets, you prepare for modeling,
-clustering, or forecasting --- without ever leaving the database.
+Feature engineering is where SQL becomes more than a query language. It becomes the engine behind reproducible, scalable data pipelines. By shaping raw tables into feature-rich datasets, you prepare for modeling, clustering, or forecasting --- without ever leaving the database.
 
 #### Data Quality and Validation Checks
-Before modeling or making business decisions, you need to make sure the
-data is clean. SQL is often your first line of defense against missing
-values, duplicates, mismatches, and outliers. Validation checks in SQL
-are fast, transparent, and easy to share with non-technical
-stakeholders.
+Before modeling or making business decisions, you need to make sure the data is clean. SQL is often your first line of defense against missing values, duplicates, mismatches, and outliers. Validation checks in SQL are fast, transparent, and easy to share with non-technical stakeholders.
 
 #### Missing Values (NULLs)
 Start by checking how many values are missing:
@@ -677,20 +594,13 @@ FROM orders
 GROUP BY region;
 ```
 
-Data science depends on data you can trust. SQL gives you fast tools to
-audit and clean your inputs. These checks help you catch broken joins,
-wrong assumptions, and system bugs --- before they pollute your models
-or dashboards.
+Data science depends on data you can trust. SQL gives you fast tools to audit and clean your inputs. These checks help you catch broken joins, wrong assumptions, and system bugs --- before they pollute your models or dashboards.
 
 ### SQL + Python for Modeling
-SQL is excellent for transforming raw data into structured, clean
-tables. But it doesn't run regressions, build neural networks, or
-cross-validate models. That's where Python comes in. Together, they form
-a seamless pipeline: SQL shapes the data, Python models it.
+SQL is excellent for transforming raw data into structured, clean tables. But it doesn't run regressions, build neural networks, or cross-validate models. That's where Python comes in. Together, they form a seamless pipeline: SQL shapes the data, Python models it.
 
 #### Building Model-Ready Tables in SQL
-Most modeling problems start with a question like: *what features
-predict churn?* You use SQL to pull the right features:
+Most modeling problems start with a question like: *what features predict churn?* You use SQL to pull the right features:
 
 ``` 
 WITH customer_features AS (
@@ -741,8 +651,7 @@ y_pred = model.predict(X_test)
 print(classification_report(y_test, y_pred))
 ```
 
-If you've done most of the cleaning, labeling, and encoding in SQL, your
-Python code becomes focused and reusable.
+If you've done most of the cleaning, labeling, and encoding in SQL, your Python code becomes focused and reusable.
 
 #### Dynamic SQL for Experiments
 You can make SQL queries dynamic using Python string formatting:
@@ -760,8 +669,7 @@ df = pd.read_sql(query, engine)
 Or use Jinja2 for cleaner templating in more complex pipelines.
 
 #### Writing Back to the Database
-If you generate predictions in Python and want to store them back in
-SQL:
+If you generate predictions in Python and want to store them back in SQL:
 
 ``` 
 df_results.to_sql("predicted_churn", engine, if_exists="replace", index=False)
@@ -769,16 +677,10 @@ df_results.to_sql("predicted_churn", engine, if_exists="replace", index=False)
 
 This helps share results with teams who work only in SQL or dashboards.
 
-SQL and Python work best when you split responsibilities: SQL for
-shaping the data, Python for modeling and interpretation. SQL keeps your
-feature logic close to the source. Python makes the insights actionable.
+SQL and Python work best when you split responsibilities: SQL for shaping the data, Python for modeling and interpretation. SQL keeps your feature logic close to the source. Python makes the insights actionable.
 
 #### Tips for Writing Maintainable SQL
-Good SQL is readable, testable, and reusable. As your queries grow from
-quick filters to multi-CTE pipelines, the difference between a working
-query and a maintainable one becomes critical. Here's how to write SQL
-that future you --- or someone on your team --- can understand and build
-on.
+Good SQL is readable, testable, and reusable. As your queries grow from quick filters to multi-CTE pipelines, the difference between a working query and a maintainable one becomes critical. Here's how to write SQL that future you --- or someone on your team --- can understand and build on.
 
 #### Use Clear, Consistent Formatting
 Write your SQL like code. Use indentation to make structure obvious.
@@ -801,10 +703,7 @@ JOIN orders o ON c.customer_id = o.customer_id
 WHERE o.order_total > 100;
 ```
 
-Put each major clause (`SELECT`,
-`FROM`, `JOIN`, `WHERE`,
-`GROUP BY`) on its own line. Indent
-nested queries and CASE statements.
+Put each major clause (`SELECT`, `FROM`, `JOIN`, `WHERE`, `GROUP BY`) on its own line. Indent nested queries and CASE statements.
 
 #### Use Descriptive Aliases
 Avoid one-letter aliases in production code unless it's a small query.
@@ -858,8 +757,7 @@ JOIN top_customers t ON c.customer_id = t.customer_id;
 CTEs make each stage readable and easier to debug.
 
 #### Avoid Repeating Logic
-If you're using the same expression in multiple places, either alias it
-or compute it once in a CTE or view.
+If you're using the same expression in multiple places, either alias it or compute it once in a CTE or view.
 
 Bad:
 
@@ -902,51 +800,19 @@ WITH recent_orders AS (
 Comments help others (and you, later) understand your assumptions.
 
 #### Version and Share Your SQL
-Keep long queries in `.sql` files under
-version control. Use Jupyter notebooks or markdown cells if sharing in
-notebooks. Reproducibility matters.
+Keep long queries in `.sql` files under version control. Use Jupyter notebooks or markdown cells if sharing in notebooks. Reproducibility matters.
 
-Readable SQL saves time. When queries grow, structure matters more than
-speed. Comments, clean formatting, and modular design turn your analysis
-into assets others can trust and reuse.
+Readable SQL saves time. When queries grow, structure matters more than speed. Comments, clean formatting, and modular design turn your analysis into assets others can trust and reuse.
 
 #### SQL is an Analytical Mindset
-SQL is a way of thinking analytically --- about relationships between
-tables, about grouping and filtering, and about how data flows from raw
-transactions to actionable insight. If you can write a clean SQL query,
-you can trace a business question back to the rows that generate the
-answer.
+SQL is a way of thinking analytically --- about relationships between tables, about grouping and filtering, and about how data flows from raw transactions to actionable insight. If you can write a clean SQL query, you can trace a business question back to the rows that generate the answer.
 
-Working in SQL forces clarity. You must name every column, specify every
-condition, and declare every transformation. There's no ambiguity, no
-hidden state. When you write `JOIN`,
-`WHERE`, `GROUP BY`, and `CASE`, you are
-encoding logic that mirrors the reasoning behind a dashboard metric, a
-data science feature, or a performance report.
+Working in SQL forces clarity. You must name every column, specify every condition, and declare every transformation. There's no ambiguity, no hidden state. When you write `JOIN`, `WHERE`, `GROUP BY`, and `CASE`, you are encoding logic that mirrors the reasoning behind a dashboard metric, a data science feature, or a performance report.
 
-SQL's declarative nature makes it collaborative. Analysts, engineers,
-and data scientists use the same syntax. A well-written query can serve
-as both code and documentation. And because SQL is so deeply embedded in
-the tools of modern data platforms learning to think in SQL gives you
-leverage anywhere structured data exists.
+SQL's declarative nature makes it collaborative. Analysts, engineers, and data scientists use the same syntax. A well-written query can serve as both code and documentation. And because SQL is so deeply embedded in the tools of modern data platforms learning to think in SQL gives you leverage anywhere structured data exists.
 
-For data science, SQL remains the most efficient way to reshape, reduce,
-aggregate, and audit large volumes of data. It's not where you fit
-models or tune hyperparameters. But it is where you define the data that
-modeling depends on. Great features start in SQL. So do great questions.
+For data science, SQL remains the most efficient way to reshape, reduce, aggregate, and audit large volumes of data. It's not where you fit models or tune hyperparameters. But it is where you define the data that modeling depends on. Great features start in SQL. So do great questions.
 
-When combined with Python, SQL becomes even more powerful. You can
-prepare features in-database, pull the results into pandas, train
-models, evaluate metrics, and return insights to a database or
-dashboard. You don't need to choose between SQL and Python. You need to
-know when to use each one.
+When combined with Python, SQL becomes even more powerful. You can prepare features in-database, pull the results into pandas, train models, evaluate metrics, and return insights to a database or dashboard. You don't need to choose between SQL and Python. You need to know when to use each one.
 
-SQL rewards precision and structure. And it scales! Learning SQL means
-you use it as a language for reasoning with data.
-::::::::By [Kyle Jones](https://medium.com/@kyle-t-jones) on
-[May 14, 2025](https://medium.com/p/719d2e1a0e0d).
-
-[Canonical
-link](https://medium.com/@kyle-t-jones/using-sql-for-data-science-and-analytics-719d2e1a0e0d)
-
-Exported from [Medium](https://medium.com) on November 10, 2025.
+SQL rewards precision and structure. And it scales! Learning SQL means you use it as a language for reasoning with data.
