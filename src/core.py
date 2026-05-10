@@ -64,27 +64,28 @@ def analyze_sql_results(df: pd.DataFrame) -> Dict:
         'memory_mb': df.memory_usage(deep=True).sum() / 1024**2
     }
 
-def plot_sql_analysis(df: pd.DataFrame, title: str, output_path: Path):
+def plot_sql_analysis(df: pd.DataFrame, title: str, output_path: Path, plot: bool = False):
     """Plot SQL analysis results """
-    fig, ax = plt.subplots(figsize=tuple(config.get('output', {}).get('figsize', [10, 6])))
+    if plot:
+        fig, ax = plt.subplots(figsize=tuple(config.get('output', {}).get('figsize', [10, 6])))
     
-    numeric_cols = df.select_dtypes(include=[np.number]).columns
-    if len(numeric_cols) > 0:
-        col = numeric_cols[0]
-        ax.hist(df[col].dropna(), bins=30, color="#4A90A4", alpha=0.7, edgecolor='none')
-        ax.set_xlabel(col)
-    else:
-        categorical_cols = df.select_dtypes(include=['object']).columns
-        if len(categorical_cols) > 0:
-            value_counts = df[categorical_cols[0]].value_counts().head(10)
-            ax.bar(range(len(value_counts)), value_counts.values,
-                  color="#4A90A4", alpha=0.7, edgecolor='none')
-            ax.set_xticks(range(len(value_counts)))
-            ax.set_xticklabels(value_counts.index, rotation=45, ha='right')
-            ax.set_xlabel(categorical_cols[0])
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        if len(numeric_cols) > 0:
+            col = numeric_cols[0]
+            ax.hist(df[col].dropna(), bins=30, color="#4A90A4", alpha=0.7, edgecolor='none')
+            ax.set_xlabel(col)
+        else:
+            categorical_cols = df.select_dtypes(include=['object']).columns
+            if len(categorical_cols) > 0:
+                value_counts = df[categorical_cols[0]].value_counts().head(10)
+                ax.bar(range(len(value_counts)), value_counts.values,
+                      color="#4A90A4", alpha=0.7, edgecolor='none')
+                ax.set_xticks(range(len(value_counts)))
+                ax.set_xticklabels(value_counts.index, rotation=45, ha='right')
+                ax.set_xlabel(categorical_cols[0])
     
-    ax.set_ylabel("Frequency")
+        ax.set_ylabel("Frequency")
     
-    plt.savefig(output_path, dpi=100, bbox_inches="tight")
-    plt.close()
+        plt.savefig(output_path, dpi=100, bbox_inches="tight")
+        plt.close()
 
