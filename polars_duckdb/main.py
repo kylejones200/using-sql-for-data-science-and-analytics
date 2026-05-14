@@ -6,7 +6,6 @@ import yaml
 import logging
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
 from core import create_sample_database, execute_sql_query, analyze_sql_results
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
