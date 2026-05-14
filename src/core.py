@@ -53,8 +53,7 @@ def execute_sql_query(customers: pd.DataFrame, orders: pd.DataFrame, query_type:
         }).reset_index()
     elif query_type == 'filter':
         return orders[orders['status'] == 'completed']
-    else:
-        return pd.DataFrame()
+    return pd.DataFrame()
 
 def analyze_sql_results(df: pd.DataFrame) -> Dict:
     """Analyze SQL query results."""
