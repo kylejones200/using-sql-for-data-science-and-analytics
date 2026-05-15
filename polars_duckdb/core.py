@@ -9,12 +9,13 @@ Here those operations are expressed as actual SQL executed by DuckDB,
 with Polars as the in-memory DataFrame format.
 """
 
-import duckdb
-import polars as pl
-import numpy as np
-import matplotlib.pyplot as plt
 from datetime import date, timedelta
 from pathlib import Path
+
+import duckdb
+import matplotlib.pyplot as plt
+import numpy as np
+import polars as pl
 
 
 def create_sample_database(
@@ -25,21 +26,29 @@ def create_sample_database(
     rng = np.random.default_rng(seed)
     start = date(2020, 1, 1)
 
-    customers = pl.DataFrame({
-        "customer_id": list(range(1, n_customers + 1)),
-        "name":        [f"Customer_{i}" for i in range(1, n_customers + 1)],
-        "region":      rng.choice(["North", "South", "East", "West"], n_customers).tolist(),
-        "signup_date": [start + timedelta(days=i) for i in range(n_customers)],
-    })
+    customers = pl.DataFrame(
+        {
+            "customer_id": list(range(1, n_customers + 1)),
+            "name": [f"Customer_{i}" for i in range(1, n_customers + 1)],
+            "region": rng.choice(
+                ["North", "South", "East", "West"], n_customers
+            ).tolist(),
+            "signup_date": [start + timedelta(days=i) for i in range(n_customers)],
+        }
+    )
 
     order_start = date(2023, 1, 1)
-    orders = pl.DataFrame({
-        "order_id":    list(range(1, n_orders + 1)),
-        "customer_id": rng.integers(1, n_customers + 1, n_orders).tolist(),
-        "order_date":  [order_start + timedelta(hours=i) for i in range(n_orders)],
-        "amount":      rng.normal(100, 30, n_orders).tolist(),
-        "status":      rng.choice(["completed", "pending", "cancelled"], n_orders).tolist(),
-    })
+    orders = pl.DataFrame(
+        {
+            "order_id": list(range(1, n_orders + 1)),
+            "customer_id": rng.integers(1, n_customers + 1, n_orders).tolist(),
+            "order_date": [order_start + timedelta(hours=i) for i in range(n_orders)],
+            "amount": rng.normal(100, 30, n_orders).tolist(),
+            "status": rng.choice(
+                ["completed", "pending", "cancelled"], n_orders
+            ).tolist(),
+        }
+    )
 
     return {"customers": customers, "orders": orders}
 
@@ -85,31 +94,38 @@ def execute_sql_query(
 
 def analyze_sql_results(df: pl.DataFrame) -> dict:
     return {
-        "n_rows":    df.height,
+        "n_rows": df.height,
         "n_columns": df.width,
-        "memory_mb": df.estimated_size() / 1024 ** 2,
+        "memory_mb": df.estimated_size() / 1024**2,
     }
 
 
-def plot_sql_analysis(df: pl.DataFrame, title: str, output_path: Path, plot: bool = False):
+def plot_sql_analysis(
+    df: pl.DataFrame, title: str, output_path: Path, plot: bool = False
+):
     if not plot:
         return
     numeric_cols = [c for c, t in zip(df.columns, df.dtypes) if t.is_numeric()]
-    cat_cols     = [c for c, t in zip(df.columns, df.dtypes) if t == pl.String]
+    cat_cols = [c for c, t in zip(df.columns, df.dtypes) if t == pl.String]
 
     fig, ax = plt.subplots(figsize=(10, 6))
     if numeric_cols:
-        col  = numeric_cols[0]
+        col = numeric_cols[0]
         data = df[col].drop_nulls().to_numpy()
         ax.hist(data, bins=30, color="#4A90A4", alpha=0.7, edgecolor="none")
         ax.set_xlabel(col)
     elif cat_cols:
-        counts = (
-            duckdb.sql(f'SELECT "{cat_cols[0]}", COUNT(*) AS n FROM df '
-                       f'GROUP BY "{cat_cols[0]}" ORDER BY n DESC LIMIT 10').pl()
+        counts = duckdb.sql(
+            f'SELECT "{cat_cols[0]}", COUNT(*) AS n FROM df '
+            f'GROUP BY "{cat_cols[0]}" ORDER BY n DESC LIMIT 10'
+        ).pl()
+        ax.bar(
+            counts[cat_cols[0]].to_list(),
+            counts["n"].to_list(),
+            color="#4A90A4",
+            alpha=0.7,
+            edgecolor="none",
         )
-        ax.bar(counts[cat_cols[0]].to_list(), counts["n"].to_list(),
-               color="#4A90A4", alpha=0.7, edgecolor="none")
         ax.tick_params(axis="x", rotation=45)
         ax.set_xlabel(cat_cols[0])
     ax.set_ylabel("Frequency")

@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """SQL for data science — Polars + DuckDB rewrite (real SQL replaces pandas substitutes)."""
 
-import yaml
 import logging
 from pathlib import Path
 
-from core import create_sample_database, execute_sql_query, analyze_sql_results
+import yaml
+from core import analyze_sql_results, create_sample_database, execute_sql_query
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def load_config(config_path: Path = None) -> dict:
@@ -18,19 +20,23 @@ def load_config(config_path: Path = None) -> dict:
 
 
 def main():
-    config   = load_config()
+    config = load_config()
     output_dir = Path(config.get("output", {}).get("figures_dir", "images"))
     output_dir.mkdir(exist_ok=True)
 
     db = create_sample_database()
     customers, orders = db["customers"], db["orders"]
-    logging.info(f"Customers: {customers.height:,} rows  |  Orders: {orders.height:,} rows")
+    logging.info(
+        f"Customers: {customers.height:,} rows  |  Orders: {orders.height:,} rows"
+    )
 
     # ── JOIN ─────────────────────────────────────────────────────────────────
     joined = execute_sql_query(customers, orders, "join")
-    stats  = analyze_sql_results(joined)
-    logging.info(f"\nJOIN  → {stats['n_rows']:,} rows  {stats['n_columns']} cols  "
-                 f"{stats['memory_mb']:.2f} MB")
+    stats = analyze_sql_results(joined)
+    logging.info(
+        f"\nJOIN  → {stats['n_rows']:,} rows  {stats['n_columns']} cols  "
+        f"{stats['memory_mb']:.2f} MB"
+    )
     logging.info(f"{joined.head(3)}")
 
     # ── GROUP BY aggregate ───────────────────────────────────────────────────
@@ -43,6 +49,7 @@ def main():
 
     # ── window: revenue rank per region ──────────────────────────────────────
     import duckdb
+
     ranked = duckdb.sql("""
         SELECT
             c.region,
