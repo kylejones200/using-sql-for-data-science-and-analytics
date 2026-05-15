@@ -3,10 +3,8 @@
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from typing import Dict
 import matplotlib.pyplot as plt
 import logging
-import yaml
 
 
 def load_config(config_path=None):
@@ -22,7 +20,7 @@ def load_config(config_path=None):
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
-def create_sample_database(n_customers: int = 1000, n_orders: int = 5000, seed: int = 42) -> Dict:
+def create_sample_database(n_customers: int = 1000, n_orders: int = 5000, seed: int = 42) -> dict:
     """Create sample database tables for SQL demonstration."""
     np.random.seed(seed)
     
@@ -55,7 +53,7 @@ def execute_sql_query(customers: pd.DataFrame, orders: pd.DataFrame, query_type:
         return orders[orders['status'] == 'completed']
     return pd.DataFrame()
 
-def analyze_sql_results(df: pd.DataFrame) -> Dict:
+def analyze_sql_results(df: pd.DataFrame) -> dict:
     """Analyze SQL query results."""
     return {
         'n_rows': len(df),

@@ -15,14 +15,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Dict
 
 
 def create_sample_database(
     n_customers: int = 1000,
     n_orders: int = 5000,
     seed: int = 42,
-) -> Dict[str, pl.DataFrame]:
+) -> dict[str, pl.DataFrame]:
     rng = np.random.default_rng(seed)
     start = date(2020, 1, 1)
 
@@ -84,7 +83,7 @@ def execute_sql_query(
     return pl.DataFrame()
 
 
-def analyze_sql_results(df: pl.DataFrame) -> Dict:
+def analyze_sql_results(df: pl.DataFrame) -> dict:
     return {
         "n_rows":    df.height,
         "n_columns": df.width,

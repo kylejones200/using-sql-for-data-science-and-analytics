@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """SQL for data science — Polars + DuckDB rewrite (real SQL replaces pandas substitutes)."""
 
-import sys
 import yaml
 import logging
 from pathlib import Path
