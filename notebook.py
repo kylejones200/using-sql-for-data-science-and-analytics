@@ -15,7 +15,7 @@ def main():
     print(result)
 
 
-def main() -> None:
+def main_alt() -> None:
     main()
 
 

@@ -25,7 +25,6 @@ def create_sample_database(
 ) -> dict[str, pl.DataFrame]:
     rng = np.random.default_rng(seed)
     start = date(2020, 1, 1)
-
     customers = pl.DataFrame(
         {
             "customer_id": list(range(1, n_customers + 1)),
@@ -36,7 +35,6 @@ def create_sample_database(
             "signup_date": [start + timedelta(days=i) for i in range(n_customers)],
         }
     )
-
     order_start = date(2023, 1, 1)
     orders = pl.DataFrame(
         {
@@ -49,7 +47,6 @@ def create_sample_database(
             ).tolist(),
         }
     )
-
     return {"customers": customers, "orders": orders}
 
 
@@ -107,7 +104,6 @@ def plot_sql_analysis(
         return
     numeric_cols = [c for c, t in zip(df.columns, df.dtypes) if t.is_numeric()]
     cat_cols = [c for c, t in zip(df.columns, df.dtypes) if t == pl.String]
-
     fig, ax = plt.subplots(figsize=(10, 6))
     if numeric_cols:
         col = numeric_cols[0]
